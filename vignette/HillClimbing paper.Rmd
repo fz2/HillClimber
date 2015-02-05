@@ -297,11 +297,12 @@ For this table, budget=50, input=20, linearConstraint=c (0,1), squareConstraint=
 Mean normalized profits over 1, 000 landscapes for different firm strategies and connections per input. 
 
 For this table, budget=50, input=20, linearConstraint=c (0,0), squareConstraint=c (-19,0), crossproductConstraint=c (0,2). 
-| Connections per input |     1     |  2   |  3   | 4   | 5   |
+
+| Connections per input |     1     |  2   |  3   | 4   |  5   |
 |----------|:-------------:|:------:|:------:|:------:|:-----------:|:------:|
-| Steepest Ascent |-8.423737 | 0.266066	| 10.24508	| 12.9103	| 21.98578 |
-| Median Ascent |  3.95997 |	2.77561	| 8.37276 |	13.05479	| 16.03198 |
-| Least Ascent | 7.89083  | 5.571232 |	9.62705 | 10.464833 | 15.2346 |
+| Steepest Ascent |-8.423737 | 0.266066	| 10.24508	| 12.9103	 |  17.98578 |
+| Median Ascent |  3.95997 |	2.77561	 |  8.37276  |	13.05479	|  16.03198  |
+| Least Ascent | 7.89083  | 5.571232 |	9.62705 |  10.464833  |  15.2346  |
 
 ### 4. Conclusion
 The results produced from the R package successfully test and support the idea in the paper. We notice that in the first two tables, Least Ascent strategy generally reaches higher profit levels than Median Ascent and Steepest Ascent. In the third table, LA has an advantage at first but loses to MA and SA as the number of connections increases to 4 and 5. This result is consistent with the paper. 
