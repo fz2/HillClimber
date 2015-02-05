@@ -1,0 +1,9 @@
+Package: HillClimbing
+Type: Package
+Title: Local hillclimbing on an economic landscape
+Version: 1.0
+Date: 2015-02-04
+Author: Fan Zhang 
+Maintainer: Fan Zhang <Fan.Zhang@williams.edu>
+Description: This is a R package that aims to reproduce results in the paper "Local Hillclimbing on an Economic Landscape" by David Kane
+License: GPL-2

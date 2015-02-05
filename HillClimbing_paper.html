@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Fan Zhang’17" />
+
+<meta name="date" content="2015-02-05" />
+
+<title>HillClimbing</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%7D%0Apre%20%7B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div id="header">
+<h1 class="title">HillClimbing</h1>
+<h4 class="author"><em>Fan Zhang’17</em></h4>
+<h4 class="date"><em>2015-02-05</em></h4>
+</div>
+
+
+<p>HillClimbing is a R package created to reproduce results in the paper “Local Hillclimbing on an Economic Landscape” by David Kane in 1996. The package has a class named ’HillClimbing“” and six different methods: generateObject( ), profitFunction( ), findNeighborhood( ), neighborhoodProfit( ), climbingStrategy( ) and paperResult( ).</p>
+<div id="paper-background" class="section level2">
+<h2>Paper background</h2>
+<p>The paper introduces an interesting idea of economic hillclimbing for different firms. Considering a firm faced with single-period profit maximization problem, the paper proposes a model with following basic components:</p>
+<ol style="list-style-type: decimal">
+<li>The set of inputs:</li>
+</ol>
+<p><span class="math">\(x=x_1x_2 \cdots x_n\mbox with x_i\in\{0,1,2,\cdots\}\)</span></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Budget constraint:</li>
+</ol>
+<p><span class="math">\(\sum^n_{i=1}x_i = B\in\{0,1,2,\cdots\}\)</span></p>
+<ol start="3" style="list-style-type: decimal">
+<li>Profit function:</li>
+</ol>
+<p><span class="math">\(\pi(X) = c_1x_1 + c_2x_2 + \cdots + c_nx_n + c_{n+1}x_1^2 + c_{n+2}x_2^2 + \cdots + c_{2n}x_n^2+ c_{2n+1}x_1x_2 +c_{2n+2}x_1x_3+\cdots+ c_{n\frac{n+3}{2}}x_{n-1}x_n\)</span></p>
+<p>The paper pictures profit functions as economic landscapes and introduces the idea of a neighborhood.The neighborhood of a given allocation X is the set of points such that all the individual allocations are identical except for two; and for those two, one input receives one more dollar and the other input receives one less.</p>
+<p>After calculating all possible outcomes of neighborhood allocations, the company has three choices regarding where to move the company: to choose the maximum in the neighborhood set and move the company to the corresponding budget allocation (SA),to choose the median in the neighborhood set higher than original profit (MA), or to choose the minimum in the neighborhood set higher than original level (LA).</p>
+<p>By computing mean normalized profits for different firm strategies and different connections, the paper points out the superiority of the Least Ascent (LA) strategy. The paper suggests that it might be advisable for companies to be patient and choose the LA strategy to achieve their ultimate profit maximization.</p>
+</div>
+<div id="package" class="section level2">
+<h2>Package</h2>
+<div id="definition-of-slots-in-hillclimbing-class" class="section level3">
+<h3>Definition of slots in HillClimbing class</h3>
+<ol style="list-style-type: decimal">
+<li>approach: three simple strategies for hillclimbing firms, users should put “SA”, “MA” or “LA” in this slot</li>
+<li>budget: the amount of firm’s total budget</li>
+<li>input: the number of total inputs</li>
+<li>connection: the number of connections per input</li>
+<li>allocation: a vector which contains a set of inputs subject to the budget constraint, a randomized allocation for the firm</li>
+<li>linearConstraint: a vector which gives upper and lower constraints for linear coefficients</li>
+<li>squareConstraint: a vector which gives upper and lower constraints for square coefficients</li>
+<li>crossproductConstraint: a vector which gives constraints for cross product coefficients</li>
+<li>coef1: a vector which stores all linear coefficients of the profit function</li>
+<li>coef2: a matrix which stores all quadratic coefficients (both square and cross product coefficients) of the profit function</li>
+</ol>
+</div>
+<div id="package-usage" class="section level3">
+<h3>Package usage</h3>
+<p>We first install and load the package.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(HillClimbing)</code></pre>
+<p>To reproduce results in the paper, we need to give the package an object in the following format. We can change the value of different slots in the object.</p>
+<pre class="sourceCode r"><code class="sourceCode r">  object &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;HillClimbing&quot;</span>, <span class="dt">approach=</span><span class="st">&quot;SA&quot;</span>, 
+                    <span class="dt">budget=</span><span class="dv">50</span>, <span class="dt">input=</span><span class="dv">20</span>, <span class="dt">connection=</span><span class="dv">2</span>, 
+                    <span class="dt">linearConstraint=</span><span class="kw">c</span>(-<span class="dv">1</span>,<span class="dv">1</span>),
+                    <span class="dt">squareConstraint=</span><span class="kw">c</span>(-<span class="dv">1</span>,<span class="dv">1</span>),
+                    <span class="dt">crossproductConstraint=</span><span class="kw">c</span>(-<span class="dv">1</span>,<span class="dv">1</span>)
+                    )</code></pre>
+<p>We start by using the method generateObject( ) and we can get an object with all slots filled.</p>
+<pre class="sourceCode r"><code class="sourceCode r">object &lt;-<span class="st"> </span><span class="kw">generateObject</span>(object)</code></pre>
+<p>Then we calculate the profit of the starting allocation with method profitFunction( ).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">profitFunction</span>(object)</code></pre>
+<p>We can find the neighborhood (all neighbors) of the starting allocation with method findNeighborhood( ).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">findNeighborhood</span>(object)</code></pre>
+<p>We then get all neighborhood profits with method neighborhoodProfit( ).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">neighborhoodProfit</span>(object)</code></pre>
+<p>We use the method climbingStrategy( ) to find the profit maximum in the local landscape.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">climbingStrategy</span>(object)</code></pre>
+<p>Finally, to find our mean normalized profits over many landscapes, we run the method paperResult( ). We may change the number of times we use the climbing strategy (the number of landscapes) by changing t in the paperResult() function.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">paperResult</span>(object)</code></pre>
+<p>However, if we are not interested in these details and want a quick result, we can also run method paperResult( ) directly after giving the object.</p>
+<pre class="sourceCode r"><code class="sourceCode r">  object &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;HillClimbing&quot;</span>, <span class="dt">approach=</span><span class="st">&quot;SA&quot;</span>, 
+                    <span class="dt">budget=</span><span class="dv">50</span>, <span class="dt">input=</span><span class="dv">20</span>, <span class="dt">connection=</span><span class="dv">2</span>, 
+                    <span class="dt">linearConstraint=</span><span class="kw">c</span>(-<span class="dv">1</span>,<span class="dv">1</span>),
+                    <span class="dt">squareConstraint=</span><span class="kw">c</span>(-<span class="dv">1</span>,<span class="dv">1</span>),
+                    <span class="dt">crossproductConstraint=</span><span class="kw">c</span>(-<span class="dv">1</span>,<span class="dv">1</span>)
+                    )
+  <span class="kw">paperResult</span>(object)</code></pre>
+</div>
+</div>
+<div id="methods" class="section level2">
+<h2>Methods</h2>
+<p>This R package uses six different methods to reproduce results in the paper. Each method is explained separately below.</p>
+<div id="generateobject" class="section level3">
+<h3>1. generateObject( )</h3>
+<p>This method is used to generate all slots of the object. It gives the object a random starting allocation and randomizes coefficients of the profit function.</p>
+<p>We generate a starting allocation subject to the budget constraint. We randomize the allocation of each dollar of the budget.</p>
+<pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span>object@input
+object@allocation &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>,n)
+    for (i in <span class="dv">1</span>:object@budget){
+      random &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span>:n,<span class="dv">1</span>,<span class="dt">replace=</span>T)
+      object@allocation[random] &lt;-<span class="st"> </span>object@allocation[random]+<span class="dv">1</span> 
+    }</code></pre>
+<p>We put the randomized allocation into the slot “allocation”. Then we randomize coefficients of the profit function and put these coefficients into slots “coef1” and “coef2”.</p>
+<pre class="sourceCode r"><code class="sourceCode r">    coef1 &lt;-<span class="st"> </span>object@coef1
+    coef2 &lt;-<span class="st"> </span>object@coef2
+    coef2 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,<span class="dt">nrow=</span>n,<span class="dt">ncol=</span>n)
+    <span class="co"># randomize linear coefficients</span>
+    coef1 &lt;-<span class="st"> </span><span class="kw">runif</span>(n,object@linearConstraint[<span class="dv">1</span>], object@linearConstraint[<span class="dv">2</span>])
+    for(i in <span class="dv">1</span>:n){
+      for (j in i:n){
+        <span class="co"># randomize square coefficients</span>
+        if(i==j){
+          coef2[i,j] &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>,object@squareConstraint[<span class="dv">1</span>],object@squareConstraint[<span class="dv">2</span>])
+        }
+        <span class="co"># randomize cross product coefficients</span>
+        else {
+          coef2[i,j] &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>,object@crossproductConstraint[<span class="dv">1</span>],object@crossproductConstraint[<span class="dv">2</span>])/<span class="dv">2</span>
+          coef2[j,i] &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>,object@crossproductConstraint[<span class="dv">1</span>],object@crossproductConstraint[<span class="dv">2</span>])/<span class="dv">2</span> 
+          }
+      }
+    }
+   <span class="kw">return</span>(object)</code></pre>
+</div>
+<div id="profitfunction" class="section level3">
+<h3>2. profitFunction( )</h3>
+<p>This method is used to calculate the normalized profit level for the given allocation. We calculate the profit by adding linear terms and quadratic terms(square and cross product terms) of the profit function. We then normalize the profit value and return it as a vector.</p>
+<pre class="sourceCode r"><code class="sourceCode r">    allocation &lt;-<span class="st"> </span>object@allocation
+    coef1 &lt;-<span class="st"> </span>object@coef1
+    coef2 &lt;-<span class="st"> </span>object@coef2
+    profit &lt;-<span class="st"> </span>coef1%*%allocation+allocation%*%(coef2%*%allocation)
+    profit.norm &lt;-<span class="st"> </span><span class="kw">as.vector</span>((<span class="dv">100</span>*profit/(object@budget+object@budget^<span class="dv">2</span>)))
+    <span class="kw">return</span>(profit.norm)</code></pre>
+</div>
+<div id="findneighborhood" class="section level3">
+<h3>3. findNeighborhood( )</h3>
+<p>This method is used to find all neighbors of the given allocation in the economic landscape. We put all neighbors into columns of a matrix and return the neighborhood matrix.</p>
+<p>We first define a n by n adjacency matrix to represent connection status between inputs (1 represents connected and 0 represents unconnected). In this way, if the number of connections is c, we can randomly connect an input wth c other inputs.</p>
+<pre class="sourceCode r"><code class="sourceCode r">    n &lt;-<span class="st"> </span>object@input
+    connections &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,<span class="dt">nrow=</span>n,<span class="dt">ncol=</span>n)
+    for (i in <span class="dv">1</span>:n){
+      c &lt;-<span class="st"> </span><span class="dv">0</span>
+      while (c &lt;<span class="st"> </span>object@connection){
+        j &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span>:n,<span class="dv">1</span>,<span class="dt">replace=</span>T)
+        while((i==j)|(connections[i,j]==<span class="dv">1</span>)){
+          j &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span>:n,<span class="dv">1</span>,<span class="dt">replace=</span>T)
+        }
+        connections[i,j]=<span class="dv">1</span>
+        c &lt;-<span class="st"> </span>c<span class="dv">+1</span>  
+      }
+    } </code></pre>
+<p>We start with the initial randomized allocation. If there exists a connection between Xi and Xj, we then transfer one dollar from input Xi to input Xj. Since we don’t know the number of neighbors, we define 1000 columns at first and delete columns of zeros later. We return a neighborhood matrix with each neighbor in a separate column.</p>
+<pre class="sourceCode r"><code class="sourceCode r">    neighbors &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>,<span class="dt">nrow =</span> n, <span class="dt">ncol =</span> <span class="dv">1000</span>)
+    k &lt;-<span class="st"> </span><span class="dv">1</span>
+    for (i in <span class="dv">1</span>:n){
+      for (j in <span class="dv">1</span>:n){
+        newNeighbor &lt;-<span class="st"> </span>object@allocation
+        if (connections[i,j] ==<span class="st"> </span><span class="dv">1</span> &amp;&amp;<span class="st"> </span>newNeighbor[i]&gt;<span class="dv">0</span>){    
+          newNeighbor[i] &lt;-<span class="st"> </span>newNeighbor[i]-<span class="dv">1</span>
+          newNeighbor[j] &lt;-<span class="st"> </span>newNeighbor[j]+<span class="dv">1</span>
+          neighbors[, k] &lt;-<span class="st"> </span>newNeighbor
+          k &lt;-<span class="st"> </span>k +<span class="st"> </span><span class="dv">1</span>    
+        }
+      }
+    }
+    <span class="co"># find out columns of zeros</span>
+    for(m in <span class="dv">1</span>:<span class="dv">1000</span>){
+      if(<span class="kw">sum</span>(neighbors[, m]) ==<span class="st"> </span><span class="dv">0</span>) {
+        break
+      }
+    }
+    neighbors &lt;-<span class="st"> </span>neighbors[,<span class="dv">1</span>:(m<span class="dv">-1</span>)]
+    <span class="kw">return</span>(neighbors)</code></pre>
+</div>
+<div id="neighborhoodprofit" class="section level3">
+<h3>4. neighborhoodProfit( )</h3>
+<p>This method is used to calculate normalized profits for all neighbors found in the landscape. We use the same method to calculate the profit of each neighbor and store all normalized neighborhood profits in a vector.</p>
+<pre class="sourceCode r"><code class="sourceCode r">    neighbors &lt;-<span class="st"> </span><span class="kw">findNeighborhood</span>(object)
+    neighbors.iniprofit &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>,<span class="kw">ncol</span>(neighbors))
+    for (k in <span class="dv">1</span>:<span class="kw">ncol</span>(neighbors)){ 
+      coef1 &lt;-<span class="st"> </span>object@coef1
+      coef2 &lt;-<span class="st"> </span>object@coef2
+      neighbors.iniprofit[k] &lt;-<span class="st"> </span>(coef1)%*%neighbors[,k]+neighbors[,k]%*%(coef2%*%neighbors[,k])  
+      neighbors.profit &lt;-<span class="st"> </span><span class="dv">100</span>*neighbors.iniprofit/(object@budget +<span class="st"> </span>object@budget^<span class="dv">2</span>)
+      }
+    <span class="kw">return</span>(neighbors.profit)</code></pre>
+</div>
+<div id="climbingstrategy" class="section level3">
+<h3>5. climbingStrategy( )</h3>
+<p>This method is used to calculate the normalized profit maximum on a local economic landscape. As the paper discusses, there are three strategies for hillclimbing firms: Steepest Ascent(SA), Median Ascent(MA) and Least Ascent(LA). This method returns the maximum profit of the local landscape.</p>
+<pre class="sourceCode r"><code class="sourceCode r">    neighbors &lt;-<span class="st"> </span><span class="kw">findNeighborhood</span>(object)
+    profit.norm &lt;-<span class="st"> </span><span class="kw">profitFunction</span>(object)
+    select &lt;-<span class="st"> </span><span class="ot">NULL</span>
+    current.profit &lt;-<span class="st"> </span>profit.norm
+    neighbors.profit &lt;-<span class="st"> </span><span class="kw">neighborhoodProfit</span>(object)
+    landscape.max &lt;-<span class="st"> </span><span class="dv">0</span>
+    <span class="co"># loop ends when there is no neighborhood profit higher than the current profit level</span>
+    while(<span class="kw">length</span>(neighbors.profit[<span class="kw">which</span>(neighbors.profit&gt;profit.norm)])!=<span class="dv">0</span>) { 
+      <span class="co"># select the subset of neighborhood profits higher than the current profit level </span>
+      select &lt;-<span class="st"> </span>neighbors.profit[<span class="kw">which</span>(neighbors.profit&gt;profit.norm)]  
+      <span class="co"># the Steepest Ascent strategy</span>
+      if(object@approach ==<span class="st">&quot;SA&quot;</span>){
+        k &lt;-<span class="st"> </span><span class="kw">which</span>(neighbors.profit==<span class="kw">max</span>(select))
+        current.profit &lt;-<span class="st"> </span>neighbors.profit[k]
+      }
+      <span class="co"># the Median Ascent strategy</span>
+      else if(object@approach ==<span class="st"> &quot;MA&quot;</span>){
+        medianIndex &lt;-<span class="st"> </span><span class="kw">which.min</span>(<span class="kw">abs</span>(select-<span class="kw">median</span>(select)))
+        k &lt;-<span class="st"> </span><span class="kw">which</span>(neighbors.profit==select[medianIndex])
+        current.profit &lt;-<span class="st"> </span>neighbors.profit[k]
+      }
+      <span class="co"># the Least Ascent strategy    </span>
+      else if(object@approach ==<span class="st"> &quot;LA&quot;</span>){
+        k &lt;-<span class="st"> </span><span class="kw">which</span>(neighbors.profit ==<span class="st"> </span><span class="kw">min</span>(select)) 
+        current.profit &lt;-<span class="st"> </span>neighbors.profit[k]
+      }
+      <span class="co"># move from the starting allocation to its neighbor given different approaches</span>
+      object@allocation &lt;-<span class="st"> </span>neighbors[,k]  
+    }
+    landscape.max &lt;-<span class="st"> </span>current.profit
+    <span class="kw">return</span>(landscape.max)</code></pre>
+</div>
+<div id="paperresult" class="section level3">
+<h3>6. paperResult( )</h3>
+<p>This method is used to run the climbingStrategy( ) method for t times and find the mean normalized profit over t different landscapes. We may change the number of t as we hillclimb over different number of landscapes.</p>
+<pre class="sourceCode r"><code class="sourceCode r">    <span class="co"># t is the number of times we want to use the according strategy</span>
+    t &lt;-<span class="st"> </span><span class="dv">1000</span>
+    Result &lt;-<span class="st"> </span><span class="ot">NULL</span>
+    for (i in <span class="dv">1</span>:t){
+      Result[i] &lt;-<span class="st"> </span><span class="kw">climbingStrategy</span>(object)
+      result &lt;-<span class="st"> </span><span class="kw">mean</span>(Result)
+    }
+    <span class="kw">return</span>(result)</code></pre>
+</div>
+</div>
+<div id="results-and-conclusion" class="section level2">
+<h2>Results and Conclusion</h2>
+<div id="table-1" class="section level3">
+<h3>1. Table 1</h3>
+<p>Mean normalized profits over 1000 landscapes for different firm strategies and connections per input.</p>
+<p>For this table, budget=50, input=20, linearConstraint=c(-1,1), squareConstraint=c(-1,1), crossproductConstraint=c(-1,1).</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Connections per input</th>
+<th align="center">1</th>
+<th align="center">2</th>
+<th align="center">3</th>
+<th align="center">4</th>
+<th align="center">5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Steepest Ascent</td>
+<td align="center">14.97216</td>
+<td align="center">25.36077</td>
+<td align="center">30.16342</td>
+<td align="center">38.22828</td>
+<td align="center">43.48658</td>
+</tr>
+<tr class="even">
+<td align="left">Median Ascent</td>
+<td align="center">15.8626</td>
+<td align="center">24.77427</td>
+<td align="center">31.27791</td>
+<td align="center">36.38747</td>
+<td align="center">44.07121</td>
+</tr>
+<tr class="odd">
+<td align="left">Least Ascent</td>
+<td align="center">23.79984</td>
+<td align="center">29.4174</td>
+<td align="center">35.43877</td>
+<td align="center">39.96177</td>
+<td align="center">46.17567</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="table-2" class="section level3">
+<h3>2. Table 2</h3>
+<p>Mean normalized profits over 1, 000 landscapes for different firm strategies and connections per input.</p>
+<p>For this table, budget=50, input=20, linearConstraint=c (0,1), squareConstraint=c (0,1), crossproductConstraint=c (-1,0).</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Connections per input</th>
+<th align="center">1</th>
+<th align="center">2</th>
+<th align="center">3</th>
+<th align="center">4</th>
+<th align="center">5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Steepest Ascent</td>
+<td align="center">-2.88448</td>
+<td align="center">7.247748</td>
+<td align="center">11.08525</td>
+<td align="center">16.66479</td>
+<td align="center">20.28711</td>
+</tr>
+<tr class="even">
+<td align="left">Median Ascent</td>
+<td align="center">-2.89668</td>
+<td align="center">6.092761</td>
+<td align="center">14.3331</td>
+<td align="center">15.76148</td>
+<td align="center">22.6064</td>
+</tr>
+<tr class="odd">
+<td align="left">Least Ascent</td>
+<td align="center">-2.81460</td>
+<td align="center">7.204734</td>
+<td align="center">15.23751</td>
+<td align="center">16.53196</td>
+<td align="center">19.41239</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="table-3" class="section level3">
+<h3>3. Table 3</h3>
+<p>Mean normalized profits over 1, 000 landscapes for different firm strategies and connections per input.</p>
+<p>For this table, budget=50, input=20, linearConstraint=c (0,0), squareConstraint=c (-19,0), crossproductConstraint=c (0,2). | Connections per input | 1 | 2 | 3 | 4 | 5 | |———-|:————-:|:——:|:——:|:——:|:———–:|:——:| | Steepest Ascent | -8.423737 | | Median Ascent | | | Least Ascent ||</p>
+</div>
+<div id="conclusion" class="section level3">
+<h3>4. Conclusion</h3>
+<p>The results produced from the R package successfully test and support the idea in the paper. We notice that in almost all cases, Least Ascent does at least as well as Median Ascent and Steepest Ascent. In some cases, LA reaches greater profit levels than MA and SA. This result is consistent with the paper.</p>
+</div>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>David Kane, “Local Hillclimbing on an Economic Landscape,” 1996</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
