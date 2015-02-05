@@ -14,7 +14,7 @@ generateObject(object)
 object: an object of HillClimbing class
 }
 \description{
-generateObject() is a method created for HillClimbing which gives
-the object a random starting allocation and randomized coefficients of the profit function
+generateObject() is a method created for HillClimbing class which gives
+the object the random starting allocation and randomized coefficients of the profit function
 }
 

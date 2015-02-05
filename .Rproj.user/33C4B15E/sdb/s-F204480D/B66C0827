@@ -1,0 +1,16 @@
+{
+    "contents" : "\n#' The climbingStrategy method\n#' @description climbingStrategy() is a method created for HillClimbing\n#' class which uses three different strategies SA,MA and LA to find the \n#' maximum profit on a local economic landscape\n#' @param object: an object of HillClimbing class\n#' @return landscape.max: the maximum profit for the local landscape\n#' @docType methods\n#' @rdname climbingStrategy_method\n#' @export\n\nsetGeneric(\n  name = \"climbingStrategy\", \n  def = function(object){standardGeneric(\"climbingStrategy\")}\n)\nsetMethod(\n  f=\"climbingStrategy\", \n  signature=\"HillClimbing\", \n  def=function(object){\n    # find all neighbors of the starting allocation\n    neighbors <- findNeighborhood(object)\n    # find the original profit level\n    profit.norm <- profitFunction(object)\n    # create a vector select to store the subset of neighborhood profits\n    select <- NULL\n    # create a slot to store current profit level, initially it is the original profit level\n    current.profit <- profit.norm\n    # find all neighborhood profits\n    neighbors.profit <- neighborhoodProfit(object)\n    # define a slot to store the maximum landscape profit\n    landscape.max <- 0\n    # loop ends when there is no neighborhood profit higher than the current profit level\n    while(length(neighbors.profit[which(neighbors.profit>profit.norm)])!=0) { \n      # select the subset of neighborhood profits higher than the current profit level \n      select <- neighbors.profit[which(neighbors.profit>profit.norm)]  \n      # the Steepest Ascent strategy\n      if(object@approach ==\"SA\"){\n        # k is the index of the allocation which we must move on to\n        k <- which(neighbors.profit==max(select))\n        current.profit <- neighbors.profit[k]\n      }\n      # the Median Ascent strategy\n      else if(object@approach == \"MA\"){\n        # medianIndex is the index for the median of select\n        medianIndex <- which.min(abs(select-median(select)))\n        k <- which(neighbors.profit==select[medianIndex])\n        current.profit <- neighbors.profit[k]\n      }\n      # the Least Ascent strategy    \n      else if(object@approach == \"LA\"){\n        k <- which(neighbors.profit == min(select)) \n        current.profit <- neighbors.profit[k]\n      }\n      # move from the starting allocation to its neighbor given different approaches\n      object@allocation <- neighbors[,k]  \n      # calculate again new profit levels for the new allocation and its neighbors\n      neighbors <- findNeighborhood(object)\n      profit.norm <- profitFunction(object)\n      neighbors.profit <- neighborhoodProfit(object)\n    }\n    landscape.max <- current.profit\n    return(landscape.max)\n  }\n)",
+    "created" : 1423164494329.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2686642704",
+    "id" : "B66C0827",
+    "lastKnownWriteTime" : 1423151197,
+    "path" : "~/Desktop/HillClimber/R/climbingStrategy.R",
+    "project_path" : "R/climbingStrategy.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

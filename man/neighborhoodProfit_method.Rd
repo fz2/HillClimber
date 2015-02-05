@@ -15,6 +15,6 @@ neighbors.profit: a vector which contains normalized profits for all neighbors
 }
 \description{
 neighborhoodProfit() is a method created for
-"HillClimbing" class which calculates the normalized profits for all neighbors
+"HillClimbing" class which calculates normalized profits for all neighbors
 }
 
