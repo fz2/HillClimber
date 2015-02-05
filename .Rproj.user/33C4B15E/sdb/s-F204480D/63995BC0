@@ -1,0 +1,16 @@
+{
+    "contents" : "^.*\\.Rproj$\n^\\.Rproj\\.user$\n",
+    "created" : 1423166721947.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2708567950",
+    "id" : "63995BC0",
+    "lastKnownWriteTime" : 1423164025,
+    "path" : "~/Desktop/HillClimber/.Rbuildignore",
+    "project_path" : ".Rbuildignore",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "text"
+}
